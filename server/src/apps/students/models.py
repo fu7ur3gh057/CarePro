@@ -1,3 +1,5 @@
+import uuid
+
 from src.apps.base.models import TimeStampedMixin, TelegramMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -7,12 +9,15 @@ from src.apps.subjects.models import Subject
 
 
 class Student(TelegramMixin, TimeStampedMixin):
-    name = models.CharField(max_length=100, verbose_name=_("Имя"))
+    full_name = models.CharField(max_length=100, verbose_name=_("ФИО"))
     phone_number = models.CharField(
         validators=[phone_regex],
         max_length=17,
         unique=True,
         verbose_name=_("Номер телефона"),
+    )
+    api_token = models.UUIDField(
+        default=uuid.uuid4, unique=True, verbose_name=_("API Токен")
     )
     city = models.ForeignKey(
         to="locations.City",
@@ -57,4 +62,4 @@ class Student(TelegramMixin, TimeStampedMixin):
             return False
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return f"{self.full_name}"
